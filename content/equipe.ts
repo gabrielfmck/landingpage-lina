@@ -110,9 +110,9 @@ export const gruposEquipe: readonly GrupoDePessoas[] = [
     id: 'membros',
     rotulo: 'Membros',
     pessoas: [
-      { nome: 'Gabriel Fernandes de Jesus' },
-      { nome: 'Leonardo Cardoso de Moura' },
-      { nome: 'Bruno Ferrari Lacerra' },
+      { nome: 'Gabriel Fernandes' },
+      { nome: 'Leonardo Cardoso' },
+      { nome: 'Bruno Ferrari' },
       { nome: 'Marya Ysabella' },
       { nome: 'Rafael Lemos' },
       { nome: 'Davi Faria' },
