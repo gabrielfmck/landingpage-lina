@@ -205,10 +205,8 @@ export const processoSeletivo = {
     } satisfies TextoComNumeros,
     acao: {
       rotulo: 'Fazer inscrição',
-      href: 'https://forms.gle/UmwAuMLziBR3D8SH6',
-      // Destino externo abre em outra aba para não perder a página do edital
-      // no meio do preenchimento. O aviso existe para quem não vê a aba nova.
-      novaAba: '(abre em nova aba)',
+      href: '/processoseletivo',
+      novaAba: '',
     },
     contato: {
       antes: 'Dúvidas sobre o processo podem ser enviadas para',

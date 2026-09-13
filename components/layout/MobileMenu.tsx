@@ -7,10 +7,13 @@ import { BrandAsset } from '@/components/primitives/BrandAsset';
 import { Button } from '@/components/ui/button';
 import { ctaHref, ctaLabel, navItems } from '@/content/navigation';
 
+import Link from 'next/link';
+
 export interface MobileMenuProps {
   open: boolean;
   onClose: () => void;
   activeId?: string;
+  session?: { id: number; email: string; nome: string } | null;
 }
 
 /**
@@ -25,7 +28,7 @@ export interface MobileMenuProps {
  * React e o do elemento: `showModal()` e `close()` são imperativos, e o
  * `onClose` devolve o caminho de volta quando o usuário fecha por Esc.
  */
-export function MobileMenu({ open, onClose, activeId }: Readonly<MobileMenuProps>) {
+export function MobileMenu({ open, onClose, activeId, session }: Readonly<MobileMenuProps>) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -49,6 +52,9 @@ export function MobileMenu({ open, onClose, activeId }: Readonly<MobileMenuProps
     };
   }, [open]);
 
+  const effectiveCtaHref = session ? '/dashboard' : ctaHref;
+  const effectiveCtaLabel = session ? 'Dashboard' : ctaLabel;
+
   return (
     <dialog
       ref={dialogRef}
@@ -59,9 +65,9 @@ export function MobileMenu({ open, onClose, activeId }: Readonly<MobileMenuProps
     >
       <div className="flex h-full flex-col p-6">
         <div className="flex items-center justify-between">
-          {/* O diálogo é uma superfície `deep` inteira: aqui a marca é sempre a
-              aplicação em negativo, sem condicional. */}
-          <BrandAsset variant="lockup-horizontal-reduzido-negativo" className="w-40" />
+          <Link href="/" onClick={onClose} className="rounded-md">
+            <BrandAsset variant="lockup-horizontal-reduzido-negativo" className="w-40" />
+          </Link>
           <Button
             variant="inverse"
             size="icon"
@@ -78,7 +84,7 @@ export function MobileMenu({ open, onClose, activeId }: Readonly<MobileMenuProps
             {navItems.map((item) => (
               <li key={item.id}>
                 <a
-                  href={item.href}
+                  href={`/${item.href}`}
                   onClick={onClose}
                   aria-current={activeId === item.id ? 'true' : undefined}
                   className="font-display block rounded-md py-2 text-2xl font-semibold aria-[current]:underline aria-[current]:underline-offset-8"
@@ -91,9 +97,9 @@ export function MobileMenu({ open, onClose, activeId }: Readonly<MobileMenuProps
         </nav>
 
         <Button asChild variant="inverse" size="lg" className="w-full">
-          <a href={ctaHref} onClick={onClose}>
-            {ctaLabel}
-          </a>
+          <Link href={effectiveCtaHref} onClick={onClose}>
+            {effectiveCtaLabel}
+          </Link>
         </Button>
       </div>
     </dialog>

@@ -2,10 +2,14 @@ import path from 'node:path';
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // Build estático: não há servidor, middleware nem route handler no alvo.
-  output: 'export',
-  // Gera um diretório por rota com index.html - mantém o try_files do Nginx trivial.
+  // Removido output: 'export' para permitir Server Actions, upload de arquivos e banco de dados.
   trailingSlash: true,
+  // Limite aumentado para Server Actions permitindo uploads de até 20MB por arquivo (40MB+ total)
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '50mb',
+    },
+  },
   // Obrigatório com output: 'export'. Os assets de marca são SVG servidos direto.
   images: { unoptimized: true },
   // Fixa a raiz do workspace: sem isto o Turbopack sobe a árvore e encontra

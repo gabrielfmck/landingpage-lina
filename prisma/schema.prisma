@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model OpenProcess {
+  id        Int      @id @default(autoincrement())
+  isOpen    Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+
+  @@map("open_process")
+}
+
+model Candidato {
+  id              Int      @id @default(autoincrement())
+  nome            String   @db.VarChar(255)
+  matricula       String   @db.VarChar(50)
+  email           String   @db.VarChar(191)
+  telefone        String   @db.VarChar(50)
+  curso           String   @db.VarChar(191)
+  periodo         String   @db.VarChar(50)
+  areaAtuacao     String   @db.VarChar(255) // Robótica, IA, Marketing
+  historicoUrl    String?  @db.VarChar(255)
+  certificadosUrl String?  @db.VarChar(255)
+  createdAt       DateTime @default(now())
+
+  @@index([email])
+  @@index([matricula])
+  @@map("candidato")
+}
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique @db.VarChar(191)
+  senha     String   @db.VarChar(255)
+  nome      String   @db.VarChar(191)
+  createdAt DateTime @default(now())
+
+  @@map("usuario")
+}

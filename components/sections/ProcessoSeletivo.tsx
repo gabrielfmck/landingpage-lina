@@ -5,6 +5,7 @@ import { Cell } from '@/components/primitives/Cell';
 import { CellGrid } from '@/components/primitives/CellGrid';
 import { SectionHeader } from '@/components/primitives/SectionHeader';
 import { Numerais } from '@/components/primitives/Numerais';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { inscricoesAbertas, processoSeletivo } from '@/content/processo-seletivo';
 
@@ -85,10 +86,9 @@ export function ProcessoSeletivo() {
 
             {inscricoesAbertas ? (
               <Button asChild size="lg" className="mt-6">
-                <a href={inscricao.acao.href} target="_blank" rel="noopener noreferrer">
+                <Link href={inscricao.acao.href}>
                   {inscricao.acao.rotulo}
-                  <span className="sr-only">{inscricao.acao.novaAba}</span>
-                </a>
+                </Link>
               </Button>
             ) : null}
 

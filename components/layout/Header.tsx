@@ -1,7 +1,9 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
-import { Menu } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
+import { Menu, LayoutDashboard } from 'lucide-react';
 
 import { BrandAsset } from '@/components/primitives/BrandAsset';
 import { MobileMenu } from '@/components/layout/MobileMenu';
@@ -55,15 +57,14 @@ const HEADER_SOLIDO: Record<string, 'paper' | 'deep'> = {
  * `scroll-margin-top` das âncoras e é lido em runtime por `useSecaoSobOHeader`:
  * é um número só, e mexer nele move os três de uma vez.
  */
-export function Header() {
+export interface HeaderProps {
+  session?: { id: number; email: string; nome: string } | null;
+}
+
+export function Header({ session }: HeaderProps) {
+  const pathname = usePathname();
   const sectionIds = useMemo(() => navItems.map((item) => item.id), []);
   const activeId = useActiveSection(sectionIds);
-  // `deep` é a superfície do Hero, e toda visita começa no topo: este é o
-  // valor que vai no HTML estático, antes de o observador existir. Com `paper`
-  // aqui, cada carga pintava uma barra branca sobre o navy e a trocava na
-  // hidratação, arrastando junto a variante do CTA - dezenas de milissegundos
-  // de flash, e quanto mais lento o aparelho, mais longo. Trocando a primeira
-  // seção da página, troque este valor junto.
   const surfaceAbaixo = useSecaoSobOHeader('deep');
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -72,6 +73,13 @@ export function Header() {
   const surface = HEADER_SOLIDO[surfaceAbaixo] ?? 'paper';
   const onDark = DARK_SURFACES.has(surface);
 
+  const effectiveCtaHref = session
+    ? '/dashboard'
+    : pathname === '/'
+      ? ctaHref
+      : `/${ctaHref}`;
+  const effectiveCtaLabel = session ? 'Dashboard' : ctaLabel;
+
   return (
     <>
       <header
@@ -79,13 +87,7 @@ export function Header() {
         className="text-on-surface data-[surface=paper]:bg-lina-paper data-[surface=paper]:border-b-lina-mist data-[surface=deep]:bg-lina-deep data-[surface=deep]:border-b-lina-royal h-header fixed inset-x-0 top-0 z-40 border-b"
       >
         <div className="mx-auto flex h-full max-w-6xl items-center justify-between gap-6 px-6">
-          <a href="#topo" aria-label="LINA - início" className="rounded-md">
-            {/* As duas aplicações ficam montadas e o CSS escolhe qual aparece.
-                Trocar o `src` na rolagem pediria um fetch no meio da troca de
-                superfície, e na primeira vez o logo sumiria por alguns quadros
-                justamente em cima da fronteira entre duas seções. Imagem com
-                `display:none` continua sendo baixada, então as duas chegam
-                juntas na carga e a troca depois é instantânea. */}
+          <Link href="/" aria-label="LINA - início" className="rounded-md">
             <BrandAsset
               variant="lockup-horizontal-reduzido"
               alt=""
@@ -98,21 +100,24 @@ export function Header() {
               loading="eager"
               className={cn('w-36', !onDark && 'hidden')}
             />
-          </a>
+          </Link>
 
           <nav aria-label="Navegação principal" className="hidden lg:block">
             <ul className="flex items-center gap-6">
-              {navItems.map((item) => (
-                <li key={item.id}>
-                  <a
-                    href={item.href}
-                    aria-current={activeId === item.id ? 'true' : undefined}
-                    className="rounded-md text-sm font-medium aria-[current]:underline aria-[current]:underline-offset-8"
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              ))}
+              {navItems.map((item) => {
+                const itemHref = pathname === '/' ? item.href : `/${item.href}`;
+                return (
+                  <li key={item.id}>
+                    <a
+                      href={itemHref}
+                      aria-current={activeId === item.id ? 'true' : undefined}
+                      className="rounded-md text-sm font-medium aria-[current]:underline aria-[current]:underline-offset-8"
+                    >
+                      {item.label}
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           </nav>
 
@@ -122,7 +127,10 @@ export function Header() {
               variant={onDark ? 'inverse' : 'solid'}
               className="hidden sm:inline-flex"
             >
-              <a href={ctaHref}>{ctaLabel}</a>
+              <Link href={effectiveCtaHref} className="inline-flex items-center gap-2">
+                {session && <LayoutDashboard className="size-4" aria-hidden="true" />}
+                {effectiveCtaLabel}
+              </Link>
             </Button>
 
             <Button
@@ -140,7 +148,12 @@ export function Header() {
         </div>
       </header>
 
-      <MobileMenu open={menuOpen} onClose={closeMenu} activeId={activeId} />
+      <MobileMenu
+        open={menuOpen}
+        onClose={closeMenu}
+        activeId={activeId}
+        session={session}
+      />
     </>
   );
 }

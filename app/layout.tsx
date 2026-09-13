@@ -6,6 +6,7 @@ import { Cursor } from '@/components/primitives/Cursor';
 import { Reveal } from '@/components/primitives/Reveal';
 import { instituicao } from '@/content/institucional';
 import { organizationJsonLd } from '@/lib/seo';
+import { getSession } from '@/lib/session';
 import './globals.css';
 
 const sora = Sora({ subsets: ['latin'], display: 'swap', variable: '--font-sora' });
@@ -55,9 +56,11 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const session = await getSession();
+
   return (
     <html
       lang="pt-BR"
@@ -71,7 +74,7 @@ export default function RootLayout({
           Pular para o conteúdo
         </a>
 
-        <Header />
+        <Header session={session} />
         {children}
 
         {/* Nenhum dos dois renderiza nada: montam um observador e um par de

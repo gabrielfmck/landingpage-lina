@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 /**
  * Id da seção que cruza a faixa central da viewport. A margem negativa cima e
@@ -8,6 +9,7 @@ import { useEffect, useState } from 'react';
  * momento em que o leitor realmente chega nela.
  */
 export function useActiveSection(ids: readonly string[]) {
+  const pathname = usePathname();
   const [activeId, setActiveId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -33,7 +35,7 @@ export function useActiveSection(ids: readonly string[]) {
 
     for (const section of sections) observer.observe(section);
     return () => observer.disconnect();
-  }, [ids]);
+  }, [ids, pathname]);
 
   return activeId;
 }
@@ -76,6 +78,7 @@ function alturaDoHeader() {
  * use a superfície da primeira seção da página. O porquê está em `Header.tsx`.
  */
 export function useSecaoSobOHeader(fallback: string) {
+  const pathname = usePathname();
   const [surface, setSurface] = useState(fallback);
 
   useEffect(() => {
@@ -107,7 +110,7 @@ export function useSecaoSobOHeader(fallback: string) {
       window.removeEventListener('resize', connect);
       observer?.disconnect();
     };
-  }, [fallback]);
+  }, [fallback, pathname]);
 
   return surface;
 }
