@@ -1,0 +1,716 @@
+@import 'tailwindcss';
+
+/* ---------------------------------------------------------------------------
+   TOKENS - fonte única de verdade da identidade LINA.
+   Nenhuma cor literal pode existir fora deste bloco.
+   Namespaces do Tailwind v4: --color-*, --font-*, --spacing-*, --radius-*.
+--------------------------------------------------------------------------- */
+
+/* `static`: o Tailwind v4 só emite as variáveis de @theme que detecta em uso.
+   Um design system precisa de todos os tokens sempre presentes - as cores de
+   divisão são lidas via var() em runtime, onde a varredura não alcança. O custo
+   são algumas centenas de bytes; o ganho é o token existir mesmo quando nenhuma
+   classe o referencia. Tirar o `static` faz tokens sumirem em silêncio. */
+@theme static {
+  /* --- Tipografia: três papéis, nunca mais ------------------------------- */
+  --font-display: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  /* --- Azuis institucionais --------------------------------------------- */
+  --color-lina-electric: #0000e6; /* ação, CTA */
+  --color-lina-royal: #182aca; /* superfícies e gráficos */
+  --color-lina-deep: #060c86; /* texto de display, fundo escuro */
+  --color-lina-facom: #006eb9; /* vínculo institucional, só onde a UFU aparece */
+  --color-lina-slate: #2d2d91; /* texto secundário sobre claro */
+  --color-lina-ink: #0a1033; /* corpo de texto */
+  --color-lina-paper: #ffffff; /* fundo padrão */
+  --color-lina-mist: #f2f3fb; /* fundo alternado de seção */
+
+  /* --- Divisões: cor viva preenche, variante -text escreve --------------- */
+  --color-lina-ia: #00bfd9;
+  --color-lina-ia-text: #007a8a; /* paper 5.06 · mist 4.57 */
+  --color-lina-r: #e9782c;
+  --color-lina-r-text: #ac5820; /* paper 5.03 · mist 4.55 */
+  --color-lina-ml: #e82ee8;
+  --color-lina-ml-text: #bb25bb; /* paper 5.13 · mist 4.64 */
+
+  /* --- Foco: anel duplo, idêntico em toda a página ----------------------- */
+  --color-lina-focus-inner: #c7d2fe;
+  --color-lina-focus-outer: #0a1033; /* anéis contrastam 12.41 entre si */
+
+  /* --- Altura do header fixo -------------------------------------------- */
+  /* Fonte única: o header usa `h-header`, o offset de âncora deriva daqui e o
+     observador de seção lê este valor em runtime. Mudar aqui move os três. */
+  --spacing-header: 5rem;
+
+  /* --- A costura: gap que deixa o fundo aparecer entre células ----------- */
+  --spacing-seam: 6px;
+  --spacing-seam-tight: 4px;
+
+  /* --- Tracking aberto do eyebrow ---------------------------------------- */
+  --tracking-bracket: 0.18em;
+
+  /* --- A curva do movimento ---------------------------------------------- */
+  /* Uma curva só para a página inteira: reveal por scroll, entrada do hero e
+     presença do menu. Desaceleração forte no fim - o gesto chega e assenta,
+     em vez de deslizar até parar. Ter isto como token é o que impede a mesma
+     curva de existir em três lugares e divergir no quarto. */
+  --ease-lina: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* --- Raio da célula ---------------------------------------------------- */
+  --radius-cell-sm: 1rem;
+  --radius-cell: 1.25rem;
+  --radius-cell-lg: 2rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Superfície corrente. Slot de runtime, nunca uma cor nova: sempre resolve
+   para um token acima. O anel de foco lê daqui para desenhar seu offset, e é
+   por isso que o utilitário de foco não precisa variar por contexto.
+--------------------------------------------------------------------------- */
+
+@layer base {
+  /* Os quatro slots que toda superfície declara: offset do anel de foco, cor
+     de texto, cor de título e cor de texto secundário. Nenhum deles é cor nova
+     - todos resolvem para um token do @theme. Como custom property herda, é o
+     que permite Cell aninhar em qualquer profundidade sem que texto ou anel de
+     foco precisem saber onde estão.
+
+     Superfície nova mora em três arquivos, e nenhum deles é opcional:
+
+       1. aqui, um bloco [data-surface='nome'] declarando os quatro slots;
+       2. o tipo CellSurface e o mapa surfaceClass, em primitives/Cell.tsx;
+       3. o mapa HEADER_SOLIDO, em layout/Header.tsx, que decide se o header
+          fica claro ou escuro ao passar por ela.
+
+     Esquecer o 3 não dá erro de compilação: o header cai no padrão claro, e
+     sobre superfície escura isso é navegação branca sobre fundo branco. */
+  :root {
+    --lina-surface: var(--color-lina-paper);
+    --lina-surface-fg: var(--color-lina-ink);
+    --lina-surface-display: var(--color-lina-deep);
+    --lina-surface-muted: var(--color-lina-slate);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Âncora não pode parar debaixo do header fixo. O recuo é declarado - altura
+     do header mais uma costura - e não sobra acidental do padding da seção.
+     `scroll-margin-top` age só na navegação por âncora e não empurra conteúdo. */
+  main > section[id],
+  footer[id] {
+    scroll-margin-top: calc(var(--spacing-header) + var(--spacing-seam));
+  }
+
+  body {
+    background-color: var(--color-lina-paper);
+    color: var(--color-lina-ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Superfícies escuras declaram a própria cor de offset do anel de foco. */
+  [data-surface='paper'] {
+    --lina-surface: var(--color-lina-paper);
+    --lina-surface-fg: var(--color-lina-ink); /* 18.51 */
+    --lina-surface-display: var(--color-lina-deep); /* 14.95 */
+    --lina-surface-muted: var(--color-lina-slate); /* 11.08 */
+  }
+  [data-surface='mist'] {
+    --lina-surface: var(--color-lina-mist);
+    --lina-surface-fg: var(--color-lina-ink); /* 16.73 */
+    --lina-surface-display: var(--color-lina-deep); /* 13.52 */
+    --lina-surface-muted: var(--color-lina-slate); /* 10.02 */
+  }
+  [data-surface='deep'] {
+    --lina-surface: var(--color-lina-deep);
+    --lina-surface-fg: var(--color-lina-paper); /* 14.95 */
+    --lina-surface-display: var(--color-lina-paper); /* 14.95 */
+    --lina-surface-muted: var(--color-lina-mist); /* 13.52 */
+  }
+  [data-surface='royal'] {
+    --lina-surface: var(--color-lina-royal);
+    --lina-surface-fg: var(--color-lina-paper); /* 9.45 */
+    --lina-surface-display: var(--color-lina-paper); /* 9.45 */
+    --lina-surface-muted: var(--color-lina-mist); /* 8.54 */
+  }
+
+  /* Preenchimento de divisão. `ink` é o único token que passa AA sobre as três
+     (8.33 / 6.33 / 5.28); `slate` e `royal` seriam distinguíveis dele mas
+     reprovam sobre `--color-lina-ml`. Logo não existe tom secundário sobre cor
+     viva: a hierarquia aqui vem de tamanho e peso, não de cor. */
+  [data-surface='ia'],
+  [data-surface='r'],
+  [data-surface='ml'] {
+    --lina-surface-fg: var(--color-lina-ink);
+    --lina-surface-display: var(--color-lina-ink);
+    --lina-surface-muted: var(--color-lina-ink);
+  }
+  [data-surface='ia'] {
+    --lina-surface: var(--color-lina-ia);
+  }
+  [data-surface='r'] {
+    --lina-surface: var(--color-lina-r);
+  }
+  [data-surface='ml'] {
+    --lina-surface: var(--color-lina-ml);
+  }
+
+  /* Anel duplo: 2px de offset na cor da superfície, 2px interno, 2px externo.
+     Contra qualquer superfície da paleta ao menos um anel passa de 3:1;
+     pior caso lina-facom, 3.58. */
+  :where(
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    summary,
+    [tabindex]:not([tabindex='-1'])
+  ):focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--lina-surface),
+      0 0 0 4px var(--color-lina-focus-inner),
+      0 0 0 6px var(--color-lina-focus-outer);
+  }
+
+  @media (forced-colors: active) {
+    :where(
+      a,
+      button,
+      input,
+      select,
+      textarea,
+      summary,
+      [tabindex]:not([tabindex='-1'])
+    ):focus-visible {
+      outline: 3px solid CanvasText;
+      outline-offset: 2px;
+    }
+  }
+
+  /* Número dentro de linha de texto: Inter Tight 600, tabular. */
+  [data-numeral] {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+
+  /* --- Barra de rolagem --------------------------------------------------- */
+
+  /* Polegar `deep` sobre trilho `mist`: 13.52. O trilho é opaco de propósito -
+     a barra é cromo, não conteúdo, e um par fixo é legível sobre qualquer
+     seção. O custo é que sobre as seções escuras ela lê como trilho claro. */
+  html {
+    scrollbar-color: var(--color-lina-deep) var(--color-lina-mist);
+    scrollbar-width: thin;
+  }
+
+  /* O Chromium ainda não aplica scrollbar-color em todos os casos; estas regras
+     dizem a mesma coisa com os mesmos tokens. */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: var(--color-lina-mist);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-lina-deep);
+    border: 2px solid var(--color-lina-mist);
+    border-radius: 999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-lina-ink);
+  }
+
+  /* --- Cursor: ponto e anel ----------------------------------------------- */
+
+  /* O nativo só some quando o custom existe de fato: o atributo é posto por
+     JavaScript depois das guardas de ponteiro fino e de movimento reduzido. */
+  html[data-cursor-ativo],
+  html[data-cursor-ativo] *:not(:is(input, textarea, [contenteditable])) {
+    cursor: none;
+  }
+
+  /* Duas peças que perseguem o ponteiro: o ponto com atraso curto, o anel com
+     atraso mais longo atrás do ponto. Nenhuma das duas crava nele. A
+     perseguição é interpolação por quadro em `Cursor.tsx`, porque posição não é
+     estado de dois valores e não dá para transicionar em CSS. O que é estado, e
+     por isso vive aqui, é o tamanho e a opacidade.
+
+     A cor vem de `--lina-surface-fg`, lido no elemento sob o ponteiro - o mesmo
+     slot que Cell e Header usam. Não é preciosismo: branco fixo desapareceria
+     em toda seção clara da página. */
+  [data-cursor-parte] {
+    color: var(--color-lina-ink);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 60;
+    border-radius: 999px;
+    pointer-events: none;
+    /* Explícito, e não `none`: transição de `none` para um número é frágil e
+       trava em 1. Partindo de 1 a interpolação é entre dois números.
+
+       Cada combinação de estado carrega seu próprio valor, em vez de compor
+       dois fatores em `calc(var() * var())`. Custom property sem `@property`
+       não é tipada nem animável, e depender dela para um valor transicionado
+       é apostar em detalhe de implementação - quatro linhas a mais aqui valem
+       mais que essa aposta. */
+    scale: 1;
+    transition:
+      scale 200ms var(--ease-lina),
+      opacity 120ms ease-out;
+  }
+
+  [data-cursor-parte='ponto'] {
+    width: 0.5rem;
+    height: 0.5rem;
+    background-color: currentColor;
+  }
+
+  [data-cursor-parte='anel'] {
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1.5px solid currentColor;
+  }
+
+  /* Sobre elemento interativo: o anel continua sendo contorno fino e é o
+     **ponto** que cresce dentro dele, quase encostando - 36px de disco dentro
+     de 52px de anel deixam 8px de folga de cada lado. As duas peças seguem
+     sendo duas.
+
+     O disco inverte o que está embaixo com `difference` sobre branco puro.
+     `difference` não escolhe cor: devolve o oposto do que já existe ali, e
+     sobre o navy da LINA isso dá amarelo, que não está na paleta. É
+     consequência da inversão, e não descuido - `difference` que respeitasse a
+     paleta não seria inversão. Se incomodar, trocar o disco para
+     `var(--lina-surface-fg)` é uma linha, e aí o negativo vira figura-fundo em
+     vez de inversão de pixel.
+
+     O anel fica fora do blend: ele é o limite, não a inversão, e em
+     `difference` sumiria contra o próprio disco.
+
+     Os `scale` dos quatro estados abaixo são fixos e conversam com a constante
+     `RAIO_MAX` de `Cursor.tsx`, que mantém o ponto dentro do anel durante a
+     transição. Mexeu num, leia o comentário do outro. */
+  [data-cursor-parte='anel'][data-cursor='interativo'] {
+    scale: 1.45;
+  }
+
+  [data-cursor-parte='ponto'][data-cursor='interativo'] {
+    scale: 4.5;
+    background-color: var(--color-lina-paper);
+    mix-blend-mode: difference;
+  }
+
+  /* A pressão contrai 20% a partir de cada estado, e por isso a combinação
+     interativo+pressionado tem regra própria: dois seletores de atributo
+     perdem para três, então ela vence sem depender de ordem. */
+  [data-cursor-parte='anel'][data-pressionado] {
+    scale: 0.8;
+  }
+
+  [data-cursor-parte='ponto'][data-pressionado] {
+    scale: 0.8;
+  }
+
+  [data-cursor-parte='anel'][data-cursor='interativo'][data-pressionado] {
+    scale: 1.16;
+  }
+
+  [data-cursor-parte='ponto'][data-cursor='interativo'][data-pressionado] {
+    scale: 3.6;
+  }
+
+  [data-cursor-parte][data-cursor='oculto'] {
+    opacity: 0;
+  }
+
+  /* --- Entrada do Hero --------------------------------------------------- */
+
+  /* O topo da página não tem gatilho de rolagem: quem dispara é a carga. Por
+     isso é @keyframes e não transição - não existe estado anterior de onde
+     transitar. E é CSS puro, sem guarda de `scripting`: sem JavaScript no
+     caminho não existe ramo em que o conteúdo acima da dobra fique preso
+     invisível esperando um chunk chegar.
+
+     A língua é a do reveal por scroll: a mesma curva, o mesmo deslocamento de
+     0.75rem e o mesmo passo de 55ms. O que muda entre os dois é o gatilho, não
+     o gesto.
+
+     Dois níveis, uma propriedade cada, para nada animar duas vezes: as células
+     do mosaico se assentam e o texto resolve no lugar. */
+  @media (prefers-reduced-motion: no-preference) {
+    [data-hero-celula] {
+      animation: hero-celula 520ms var(--ease-lina) both;
+    }
+
+    /* A líder só sobe, sem opacidade. Ela carrega a cascata do texto dentro
+       dela e opacidade de pai multiplica a do filho - o texto chegaria com uma
+       curva que não é a dele. É também o que mantém o h1, que é o elemento de
+       LCP, pintando no primeiro quadro em vez de esperar o fade da célula. */
+    [data-hero-celula='lider'] {
+      animation-name: hero-assenta;
+    }
+
+    [data-hero-celula='marca'] {
+      animation-delay: 55ms;
+    }
+
+    [data-hero-celula='divisao']:nth-child(1) {
+      animation-delay: 110ms;
+    }
+    [data-hero-celula='divisao']:nth-child(2) {
+      animation-delay: 165ms;
+    }
+    [data-hero-celula='divisao']:nth-child(3) {
+      animation-delay: 220ms;
+    }
+
+    /* Os quatro blocos da célula-líder já estão em ordem de leitura no DOM -
+       eyebrow, título, sublinha, ações - então o passo sai do nth-child, do
+       mesmo jeito que o reveal escalona dentro do grupo. Só opacidade: o
+       deslocamento é da célula, e texto que se move dentro de uma célula que
+       também se move lê como texto solto. */
+    [data-hero-celula='lider'] > * {
+      animation: hero-texto 420ms var(--ease-lina) both;
+    }
+    [data-hero-celula='lider'] > *:nth-child(1) {
+      animation-delay: 55ms;
+    }
+    [data-hero-celula='lider'] > *:nth-child(2) {
+      animation-delay: 110ms;
+    }
+    [data-hero-celula='lider'] > *:nth-child(3) {
+      animation-delay: 165ms;
+    }
+    [data-hero-celula='lider'] > *:nth-child(4) {
+      animation-delay: 220ms;
+    }
+  }
+
+  @keyframes hero-celula {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes hero-assenta {
+    from {
+      transform: translateY(0.75rem);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  @keyframes hero-texto {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* --- Reveal por scroll ------------------------------------------------- */
+
+  /* O estado inicial escondido só existe quando há script para revelá-lo. Sem
+     JavaScript a consulta não casa, a regra cai e o conteúdo nasce visível -
+     que é o que um export estático precisa garantir. */
+  @media (scripting: enabled) {
+    /* Deslocamento base do grupo. O cabeçalho da seção lidera; o grid que vem
+       depois começa a cascata já com o cabeçalho no lugar, para a entrada ser
+       leitura ordenada - eyebrow, título, primeira célula - e não um bloco só
+       chegando. */
+    [data-reveal-group] {
+      --reveal-base: 0ms;
+    }
+
+    [data-reveal-header] + [data-reveal-group],
+    [data-reveal-header] + * > [data-reveal-group] {
+      --reveal-base: 150ms;
+    }
+
+    [data-reveal-group] > * {
+      opacity: 0;
+      transform: translateY(0.75rem);
+      transition:
+        opacity 380ms var(--ease-lina),
+        transform 380ms var(--ease-lina);
+    }
+
+    [data-reveal-group][data-revealed] > * {
+      opacity: 1;
+      transform: none;
+      transition-delay: var(--reveal-base);
+    }
+
+    /* Escalonamento dentro do grupo. Cada CellGrid é um grupo, então nunca
+       escalona entre seções. */
+    [data-reveal-group][data-revealed] > *:nth-child(2) {
+      transition-delay: calc(var(--reveal-base) + 55ms);
+    }
+    [data-reveal-group][data-revealed] > *:nth-child(3) {
+      transition-delay: calc(var(--reveal-base) + 110ms);
+    }
+    [data-reveal-group][data-revealed] > *:nth-child(4) {
+      transition-delay: calc(var(--reveal-base) + 165ms);
+    }
+    [data-reveal-group][data-revealed] > *:nth-child(5) {
+      transition-delay: calc(var(--reveal-base) + 220ms);
+    }
+    [data-reveal-group][data-revealed] > *:nth-child(6) {
+      transition-delay: calc(var(--reveal-base) + 275ms);
+    }
+    [data-reveal-group][data-revealed] > *:nth-child(7) {
+      transition-delay: calc(var(--reveal-base) + 330ms);
+    }
+    [data-reveal-group][data-revealed] > *:nth-child(8) {
+      transition-delay: calc(var(--reveal-base) + 385ms);
+    }
+    [data-reveal-group][data-revealed] > *:nth-child(9) {
+      transition-delay: calc(var(--reveal-base) + 440ms);
+    }
+    [data-reveal-group][data-revealed] > *:nth-child(10) {
+      transition-delay: calc(var(--reveal-base) + 495ms);
+    }
+    [data-reveal-group][data-revealed] > *:nth-child(11) {
+      transition-delay: calc(var(--reveal-base) + 550ms);
+    }
+    [data-reveal-group][data-revealed] > *:nth-child(12) {
+      transition-delay: calc(var(--reveal-base) + 605ms);
+    }
+
+    /* Teto do escalonamento. Sem isto, o 13º filho volta a atraso zero e anima
+       junto com o primeiro - e a cascata também não pode crescer sem limite:
+       605ms mais a duração já é o ponto em que esperar deixa de ser gesto. */
+    [data-reveal-group][data-revealed] > *:nth-child(n + 13) {
+      transition-delay: calc(var(--reveal-base) + 605ms);
+    }
+  }
+
+  /* Movimento reduzido: estado final direto, sem transição e sem depender do
+     observador ter disparado. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal-group] > *,
+    [data-reveal-group][data-revealed] > * {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /* --- A costura que abre ------------------------------------------------ */
+
+  /* Amarrada ao progresso do scroll, não disparada como transição: a fresta se
+     abre conforme o leitor desce. É `animation-timeline: view()` nativo - zero
+     JavaScript. Onde não houver suporte, nada acontece e a célula já nasce na
+     posição final, que é o estado de hoje.
+
+     A célula interna começa maior, quase encostando na moldura, e assenta -
+     então o que anima é a largura da fresta colorida, não a célula. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+      [data-costura] {
+        animation: costura-abre linear both;
+        animation-timeline: view();
+        animation-range: entry 10% cover 38%;
+        transform-origin: center;
+        will-change: transform;
+      }
+    }
+  }
+
+  @keyframes costura-abre {
+    from {
+      transform: scale(1.05);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  /* --- <dialog> nativo: o menu mobile ------------------------------------ */
+
+  /* Presença animada sem biblioteca. `@starting-style` dá o estado de onde a
+     entrada parte, e `allow-discrete` em `display` e `overlay` segura o
+     elemento na top layer até a saída terminar - sem `overlay`, o `close()`
+     do `<dialog>` cortaria a saída no primeiro quadro. Onde a propriedade não
+     existe, a entrada continua e só a saída degrada para instantânea, que é o
+     comportamento de hoje.
+
+     Desce a partir do topo porque é de lá que ele vem: o botão que o abre está
+     no header. */
+  dialog {
+    opacity: 0;
+    translate: 0 -0.75rem;
+    transition:
+      opacity 200ms var(--ease-lina),
+      translate 200ms var(--ease-lina),
+      display 200ms allow-discrete,
+      overlay 200ms allow-discrete;
+  }
+
+  dialog[open] {
+    opacity: 1;
+    translate: none;
+  }
+
+  /* Depois da regra de `[open]` de propósito: com a mesma especificidade, é a
+     ordem que decide qual estado inicial o browser lê. */
+  @starting-style {
+    dialog[open] {
+      opacity: 0;
+      translate: 0 -0.75rem;
+    }
+  }
+
+  /* --- <details> nativo: o FAQ ------------------------------------------ */
+
+  /* `interpolate-size` é o que deixa o browser interpolar até `auto`. Onde não
+     existe, tudo abaixo degrada para o comportamento padrão sem regressão. */
+  :root {
+    interpolate-size: allow-keywords;
+  }
+
+  details > summary {
+    cursor: pointer;
+    list-style: none;
+  }
+
+  details > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Transição, e não @keyframes, para a altura: é um estado de dois valores e
+     precisa animar nos dois sentidos. Keyframe só animaria a abertura. */
+  details::details-content {
+    block-size: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+      block-size 240ms ease-out,
+      content-visibility 240ms allow-discrete,
+      opacity 180ms ease-out;
+  }
+
+  details[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+
+  /* Onde `::details-content` não existe, a altura salta e este keyframe é o
+     único amaciamento - roda em qualquer browser e custa zero. */
+  details[open] > [data-details-corpo] {
+    animation: revelar 220ms ease-out;
+  }
+
+  @keyframes revelar {
+    from {
+      opacity: 0;
+      transform: translateY(-0.25rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@utility text-on-surface {
+  color: var(--lina-surface-fg);
+}
+
+@utility text-on-surface-display {
+  color: var(--lina-surface-display);
+}
+
+@utility text-on-surface-muted {
+  color: var(--lina-surface-muted);
+}
+
+/* ---------------------------------------------------------------------------
+   Ponte shadcn/ui - os semânticos do shadcn mapeados sobre os tokens LINA.
+   Sem bloco .dark: a página não tem dark mode.
+--------------------------------------------------------------------------- */
+
+:root {
+  /* Raio de controle, não de superfície. Ligar --radius a --radius-cell (20px)
+     transformava todo botão de 36px em pílula, o que não é o motivo da célula.
+     Superfície usa --radius-cell-*; controle usa esta escala. */
+  --radius: 0.625rem;
+
+  --background: var(--color-lina-paper);
+  --foreground: var(--color-lina-ink);
+  --card: var(--color-lina-paper);
+  --card-foreground: var(--color-lina-ink);
+  --popover: var(--color-lina-paper);
+  --popover-foreground: var(--color-lina-ink);
+  --primary: var(--color-lina-electric);
+  --primary-foreground: var(--color-lina-paper);
+  --secondary: var(--color-lina-mist);
+  --secondary-foreground: var(--color-lina-ink);
+  --muted: var(--color-lina-mist);
+  --muted-foreground: var(--color-lina-slate);
+  --accent: var(--color-lina-mist);
+  --accent-foreground: var(--color-lina-electric);
+  --ring: var(--color-lina-focus-inner);
+
+  /* Derivados de --color-lina-ink por transparência, não cores novas.
+     Decidido: a paleta não tem cor de linha e não se inventa hex. */
+  --border: color-mix(in oklab, var(--color-lina-ink) 12%, transparent);
+  --input: color-mix(in oklab, var(--color-lina-ink) 18%, transparent);
+
+  /* --destructive não tem equivalente na paleta LINA e não foi inventado.
+     A variante correspondente foi removida do Button. */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}

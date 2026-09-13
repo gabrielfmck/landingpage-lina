@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Camada_2" data-name="Camada 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384.45 187.22">
+  <defs>
+    <style>
+      .cls-1 {
+        letter-spacing: .09em;
+      }
+
+      .cls-2 {
+        letter-spacing: .03em;
+      }
+
+      .cls-3 {
+        font-family: VinilaVariable-Regular, 'Vinila Variable';
+        font-size: 33.43px;
+        font-variation-settings: 'wdth' 100, 'wght' 400, 'slnt' 0;
+      }
+
+      .cls-3, .cls-4 {
+        fill: #fff;
+      }
+
+      .cls-5 {
+        letter-spacing: .09em;
+      }
+
+      .cls-6 {
+        letter-spacing: -.01em;
+      }
+
+      .cls-7 {
+        letter-spacing: .03em;
+      }
+
+      .cls-8 {
+        letter-spacing: 0em;
+      }
+
+      .cls-9 {
+        letter-spacing: .08em;
+      }
+
+      .cls-10 {
+        letter-spacing: .07em;
+      }
+    </style>
+  </defs>
+  <g id="Camada_2-2" data-name="Camada 2">
+    <g>
+      <text class="cls-3" transform="translate(0 139.8)"><tspan class="cls-1" x="0" y="0">Liga </tspan><tspan class="cls-9" x="86.22" y="0">d</tspan><tspan class="cls-1" x="108.39" y="0">e Rob</tspan><tspan class="cls-10" x="210.26" y="0">ó</tspan><tspan class="cls-5" x="231.96" y="0">tica e IA</tspan></text>
+      <text class="cls-3" transform="translate(1.04 180.13)"><tspan class="cls-2" x="0" y="0">&lt; </tspan><tspan class="cls-6" x="27.85" y="0">F</tspan><tspan class="cls-8" x="46.24" y="0">A</tspan><tspan class="cls-7" x="68.17" y="0">COM - UFU</tspan></text>
+      <g>
+        <path class="cls-4" d="M98.24,79.28H30.57c-5.22,0-9.46-4.24-9.46-9.46V3.71c0-2.05-1.66-3.71-3.71-3.71H1.31c-.16,0-.29.14-.28.3.35,3.71.06,41.15.03,62.49-.01,8.97,3.38,17.62,9.5,24.18l.97,1.04c7.15,7.67,12.12,12.02,22.6,12.02h64.1c.15,0,.28-.12.28-.28v-20.2c0-.15-.12-.28-.28-.28Z"/>
+        <path class="cls-4" d="M116.56,3.61c-.15,17.92.08,96.42.08,96.42h20.96V0h-17.39c-2,0-3.63,1.61-3.65,3.61Z"/>
+        <path class="cls-4" d="M240.71,6.26c-3.97-4.01-9.38-6.26-15.02-6.26h-36.15c-5.83,0-11.41,2.38-15.44,6.6l-11.76,12.3c-3.94,4.11-6.13,9.59-6.11,15.28.05,19.83.14,66.02-.02,65.85h20.34V25.2c0-2.16,1.75-3.91,3.91-3.91h43.82c9.7,0,17.57,7.87,17.57,17.57v61.16h20.2v-63.53c0-5.57-2.2-10.92-6.12-14.88l-15.21-15.35Z"/>
+        <path class="cls-4" d="M378.33,21.62l-15.21-15.35c-3.97-4.01-9.38-6.26-15.02-6.26h-36.15c-5.83,0-11.41,2.38-15.44,6.6l-11.76,12.3c-3.94,4.11-6.13,9.59-6.11,15.28.05,19.83.14,66.02-.02,65.85h20.34v-27.42h65.3v27.42h20.2v-63.53c0-5.57-2.2-10.92-6.12-14.88ZM364.25,51.31h-65.3v-26.11c0-2.16,1.75-3.91,3.91-3.91h43.82c9.7,0,17.57,7.87,17.57,17.57v12.45Z"/>
+      </g>
+    </g>
+  </g>
+</svg>
