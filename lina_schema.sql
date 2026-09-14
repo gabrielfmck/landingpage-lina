@@ -10,7 +10,7 @@ CREATE DATABASE IF NOT EXISTS `lina_bd`
 
 -- 2. Criação do usuário e concessão de privilégios para acesso local (produção)
 -- Altere 'sua_senha_segura_aqui' para uma senha forte no seu servidor de produção.
-CREATE USER IF NOT EXISTS 'lina_user'@'localhost' IDENTIFIED BY 'lina_password';
+CREATE USER IF NOT EXISTS 'lina_user'@'localhost' IDENTIFIED BY '5G7GztsTHBjUe4+ZU/RAJ//3s40yH6TuJ3bq8E70ImU';
 GRANT ALL PRIVILEGES ON `lina_bd`.* TO 'lina_user'@'localhost';
 FLUSH PRIVILEGES;
 

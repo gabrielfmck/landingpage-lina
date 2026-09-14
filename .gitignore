@@ -8,3 +8,5 @@ next-env.d.ts
 .DS_Store
 Thumbs.db
 uploads/
+DEPLOY_PRODUCAO.md
+lina_schema.sql
