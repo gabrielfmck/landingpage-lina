@@ -38,6 +38,7 @@ interface Candidato {
   telefone: string;
   curso: string;
   periodo: string;
+  campus?: string | null;
   areaAtuacao: string;
   historicoUrl: string | null;
   certificadosUrl: string | null;
@@ -142,13 +143,14 @@ export function DashboardClient({
   }
 
   function handleExportCSV() {
-    const headers = ['ID', 'Nome', 'Matrícula', 'E-mail', 'Telefone', 'Curso', 'Período', 'Áreas', 'Histórico', 'Certificados', 'Data'];
+    const headers = ['ID', 'Nome', 'Matrícula', 'E-mail', 'Telefone', 'Campus', 'Curso', 'Período', 'Áreas', 'Histórico', 'Certificados', 'Data'];
     const rows = candidatos.map((c) => [
       c.id,
       `"${c.nome.replace(/"/g, '""')}"`,
       `"${c.matricula}"`,
       `"${c.email}"`,
       `"${c.telefone}"`,
+      `"${(c.campus || 'Campus Uberlândia (Umuarama, Santa Mônica, Educação Física, Glória)').replace(/"/g, '""')}"`,
       `"${c.curso}"`,
       `"${c.periodo}"`,
       `"${c.areaAtuacao}"`,
@@ -210,7 +212,8 @@ export function DashboardClient({
       c.nome.toLowerCase().includes(termo) ||
       c.matricula.toLowerCase().includes(termo) ||
       c.email.toLowerCase().includes(termo) ||
-      c.curso.toLowerCase().includes(termo);
+      c.curso.toLowerCase().includes(termo) ||
+      (c.campus ? c.campus.toLowerCase().includes(termo) : false);
 
     const matchArea =
       filtroArea === 'todos' ? true : c.areaAtuacao.toLowerCase().includes(filtroArea.toLowerCase());
@@ -430,7 +433,7 @@ export function DashboardClient({
                             </span>
                           </div>
                           <p className="mt-1 text-xs text-lina-slate">
-                            {candidato.curso} · {candidato.periodo}
+                            {candidato.curso} · {candidato.periodo} {candidato.campus ? `· ${candidato.campus}` : ''}
                           </p>
                         </div>
 
@@ -459,7 +462,7 @@ export function DashboardClient({
                       {/* Painel de Detalhes Expandido */}
                       {isExpanded && (
                         <div className="border-t border-lina-mist bg-lina-mist/30 p-5 sm:p-6 text-sm text-lina-ink">
-                          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                             <div>
                               <span className="text-xs font-semibold tracking-wider text-lina-slate uppercase">
                                 E-mail
@@ -488,6 +491,15 @@ export function DashboardClient({
                                   {candidato.telefone}
                                   <ExternalLink className="size-3" aria-hidden="true" />
                                 </a>
+                              </p>
+                            </div>
+
+                            <div>
+                              <span className="text-xs font-semibold tracking-wider text-lina-slate uppercase">
+                                Campus
+                              </span>
+                              <p className="mt-1 text-lina-ink font-medium">
+                                {candidato.campus || 'Campus Uberlândia (Umuarama, Santa Mônica, Educação Física, Glória)'}
                               </p>
                             </div>
 

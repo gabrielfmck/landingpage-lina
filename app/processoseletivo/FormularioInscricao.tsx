@@ -38,6 +38,13 @@ const PERIODOS = [
   '10º Período ou superior',
 ];
 
+const CAMPUS_OPTIONS = [
+  'Campus Uberlândia (Umuarama, Santa Mônica, Educação Física, Glória)',
+  'Campus Pontal',
+  'Campus Monte Carmelo',
+  'Campus Patos de Minas',
+];
+
 const AREAS_ATUACAO = [
   { id: 'Robótica', label: 'Robótica', desc: 'Hardware, sistemas embarcados, ROS e mecânica' },
   { id: 'IA', label: 'IA (Inteligência Artificial)', desc: 'Machine Learning, Visão Computacional e NLP' },
@@ -186,6 +193,10 @@ export function FormularioInscricao() {
                 <span className="font-medium text-lina-ink">{sucessoData.periodo}</span>
               </div>
               <div className="sm:col-span-2">
+                <span className="text-lina-slate">Campus:</span>{' '}
+                <span className="font-medium text-lina-ink">{sucessoData.campus}</span>
+              </div>
+              <div className="sm:col-span-2">
                 <span className="text-lina-slate">Área(s):</span>{' '}
                 <span className="font-semibold text-lina-deep">{sucessoData.areaAtuacao}</span>
               </div>
@@ -240,6 +251,21 @@ export function FormularioInscricao() {
           Preencha com atenção seus dados acadêmicos e anexe a documentação necessária. A inscrição é
           gratuita e regida pelo Edital 01/2026.
         </p>
+
+        <div className="mt-4">
+          <Button asChild variant="outline" size="sm">
+            <a
+              href="/edital.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              download="Edital_01_2026_LINA.pdf"
+              className="inline-flex items-center gap-2"
+            >
+              <Download className="size-4" aria-hidden="true" />
+              Fazer download do edital
+            </a>
+          </Button>
+        </div>
 
         {erro && (
           <div
@@ -335,7 +361,7 @@ export function FormularioInscricao() {
               </select>
             </div>
 
-            <div className="sm:col-span-2">
+            <div>
               <label htmlFor="periodo" className="block text-sm font-semibold text-lina-deep">
                 Período cursado no semestre atual <span className="text-lina-electric">*</span>
               </label>
@@ -352,6 +378,28 @@ export function FormularioInscricao() {
                 {PERIODOS.map((p) => (
                   <option key={p} value={p}>
                     {p}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="campus" className="block text-sm font-semibold text-lina-deep">
+                Campus <span className="text-lina-electric">*</span>
+              </label>
+              <select
+                id="campus"
+                name="campus"
+                required
+                defaultValue=""
+                className="mt-1.5 block w-full rounded-md border border-lina-slate/30 bg-lina-paper px-3.5 py-2 text-sm text-lina-ink shadow-xs outline-none transition-all focus:border-lina-electric focus:ring-2 focus:ring-lina-electric/20"
+              >
+                <option value="" disabled>
+                  Selecione o campus
+                </option>
+                {CAMPUS_OPTIONS.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
                   </option>
                 ))}
               </select>

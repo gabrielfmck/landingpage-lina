@@ -23,6 +23,7 @@ model Candidato {
   telefone        String   @db.VarChar(50)
   curso           String   @db.VarChar(191)
   periodo         String   @db.VarChar(50)
+  campus          String?  @default("Campus Uberlândia (Umuarama, Santa Mônica, Educação Física, Glória)") @db.VarChar(191)
   areaAtuacao     String   @db.VarChar(255) // Robótica, IA, Marketing
   historicoUrl    String?  @db.VarChar(255)
   certificadosUrl String?  @db.VarChar(255)

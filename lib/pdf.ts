@@ -8,6 +8,7 @@ export interface CandidatoComprovante {
   telefone: string;
   curso: string;
   periodo: string;
+  campus?: string;
   areaAtuacao: string;
   temHistorico: boolean;
   temCertificados: boolean;
@@ -87,6 +88,7 @@ export function gerarComprovantePDF(candidato: CandidatoComprovante) {
     { rotulo: 'E-mail:', valor: candidato.email },
     { rotulo: 'Telefone de Contato:', valor: candidato.telefone },
     { rotulo: 'Curso de Graduação:', valor: candidato.curso },
+    { rotulo: 'Campus:', valor: candidato.campus || 'Campus Uberlândia (Umuarama, Santa Mônica, Educação Física, Glória)' },
     { rotulo: 'Período Cursado:', valor: candidato.periodo },
     { rotulo: 'Área(s) de Atuação:', valor: candidato.areaAtuacao },
   ];

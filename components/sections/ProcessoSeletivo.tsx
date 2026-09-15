@@ -6,6 +6,7 @@ import { CellGrid } from '@/components/primitives/CellGrid';
 import { SectionHeader } from '@/components/primitives/SectionHeader';
 import { Numerais } from '@/components/primitives/Numerais';
 import Link from 'next/link';
+import { Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { inscricoesAbertas, processoSeletivo } from '@/content/processo-seletivo';
 
@@ -84,13 +85,28 @@ export function ProcessoSeletivo() {
               <Numerais texto={inscricao.vagas.texto} numeros={inscricao.vagas.numeros} />
             </p>
 
-            {inscricoesAbertas ? (
-              <Button asChild size="lg" className="mt-6">
-                <Link href={inscricao.acao.href}>
-                  {inscricao.acao.rotulo}
-                </Link>
+            <div className="mt-6 flex flex-wrap items-center gap-4">
+              {inscricoesAbertas ? (
+                <Button asChild size="lg">
+                  <Link href={inscricao.acao.href}>
+                    {inscricao.acao.rotulo}
+                  </Link>
+                </Button>
+              ) : null}
+
+              <Button asChild variant="outline" size="lg">
+                <a
+                  href="/edital.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download="Edital_01_2026_LINA.pdf"
+                  className="inline-flex items-center gap-2"
+                >
+                  <Download className="size-4" aria-hidden="true" />
+                  Fazer download do edital
+                </a>
               </Button>
-            ) : null}
+            </div>
 
             <p className="border-t-lina-ink/10 mt-6 max-w-4xl border-t pt-4 text-sm">
               {inscricao.contato.antes}{' '}

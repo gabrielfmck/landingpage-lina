@@ -18,6 +18,7 @@ export interface InscricaoResponse {
     telefone: string;
     curso: string;
     periodo: string;
+    campus: string;
     areaAtuacao: string;
     temHistorico: boolean;
     temCertificados: boolean;
@@ -40,9 +41,10 @@ export async function submeterInscricao(formData: FormData): Promise<InscricaoRe
   const telefone = (formData.get('telefone') as string)?.trim();
   const curso = (formData.get('curso') as string)?.trim();
   const periodo = (formData.get('periodo') as string)?.trim();
+  const campus = (formData.get('campus') as string)?.trim();
   const areasAtuacao = formData.getAll('areaAtuacao') as string[];
 
-  if (!nome || !matricula || !email || !telefone || !curso || !periodo || areasAtuacao.length === 0) {
+  if (!nome || !matricula || !email || !telefone || !curso || !periodo || !campus || areasAtuacao.length === 0) {
     return {
       success: false,
       error: 'Por favor, preencha todos os campos obrigatórios e selecione ao menos uma área de atuação.',
@@ -81,6 +83,7 @@ export async function submeterInscricao(formData: FormData): Promise<InscricaoRe
         telefone,
         curso,
         periodo,
+        campus: campus || 'Campus Uberlândia (Umuarama, Santa Mônica, Educação Física, Glória)',
         areaAtuacao: areasAtuacao.join(', '),
       },
     });
@@ -127,6 +130,7 @@ export async function submeterInscricao(formData: FormData): Promise<InscricaoRe
         telefone: candidato.telefone,
         curso: candidato.curso,
         periodo: candidato.periodo,
+        campus: candidato.campus ?? 'Campus Uberlândia (Umuarama, Santa Mônica, Educação Física, Glória)',
         areaAtuacao: candidato.areaAtuacao,
         temHistorico: !!historicoUrl,
         temCertificados: !!certificadosUrl,
