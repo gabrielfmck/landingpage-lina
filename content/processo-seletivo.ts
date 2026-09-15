@@ -61,7 +61,7 @@ export const inscricoesAbertas: boolean = true;
  * A data-limite do ciclo, num lugar só. O hero também a anuncia, e duas datas
  * digitadas em dois arquivos é como um site termina com dois prazos diferentes.
  */
-export const encerramentoDasInscricoes = '18 de setembro';
+export const encerramentoDasInscricoes = '22 de setembro';
 
 const encerramentoComAno = `${encerramentoDasInscricoes} de 2026`;
 
@@ -177,13 +177,13 @@ export const processoSeletivo = {
     titulo: 'Cronograma de 2026',
     marcos: [
       { data: '11/09', evento: 'Abertura das inscrições' },
-      { data: '18/09', evento: 'Encerramento das inscrições' },
-      { data: '21/09', evento: 'Prova classificatória' },
-      { data: '23/09', evento: 'Resultado da prova e agendamento das entrevistas' },
-      { data: '24 e 25/09', evento: 'Entrevistas' },
-      { data: '25/09', evento: 'Resultado final' },
-      { data: 'até 29/09', evento: 'Prazo para recurso' },
-      { data: '01/10', evento: 'Início das atividades' },
+      { data: '22/09', evento: 'Encerramento das inscrições' },
+      { data: '24/09', evento: 'Prova classificatória' },
+      { data: '25/09', evento: 'Resultado da prova e agendamento das entrevistas' },
+      { data: '28 a 30/09', evento: 'Entrevistas' },
+      { data: '01/10', evento: 'Resultado final' },
+      { data: 'até 05/10', evento: 'Prazo para recurso' },
+      { data: '07/10', evento: 'Início das atividades' },
     ] satisfies readonly MarcoDoCronograma[],
   },
 
